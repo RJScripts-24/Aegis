@@ -102,13 +102,17 @@ function Header() {
 function HeroSection() {
   return (
     <section className="relative h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Image */}
+      {/* Background Video */}
       <div className="absolute inset-0 z-0">
-        <ImageWithFallback
-          src="https://images.unsplash.com/photo-1660839178653-7f9d01642105?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkcmFtYXRpYyUyMHN0b3JtJTIwY2xvdWRzJTIwc2F0ZWxsaXRlfGVufDF8fHx8MTc2MTMxMzQ0MXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-          alt="Dramatic storm clouds"
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
           className="w-full h-full object-cover"
-        />
+        >
+          <source src="/src/hero.mp4" type="video/mp4" />
+        </video>
         <div className="absolute inset-0 bg-black/60" />
       </div>
 
@@ -317,13 +321,20 @@ function DisasterTypesSection() {
       </div>
 
       <div className="space-y-12">
-        {/* Flat Overlapping Carousel */}
-        <div className="relative h-[450px] flex items-center justify-center overflow-visible">
-          <div className="relative w-full max-w-6xl h-full flex items-center justify-center mx-auto">
+        {/* Coverflow 3D Carousel */}
+        <div className="relative h-[500px] flex items-center justify-center overflow-visible" style={{ perspective: '2000px' }}>
+          <div className="relative w-full h-full flex items-center justify-center mx-auto">
             {getVisibleCards().map(({ disaster, position }) => {
               const isCenter = position === 0;
-              const translateX = position * 300; // Horizontal offset for overlapping
-              const scale = isCenter ? 1 : 0.85; // Center card slightly larger
+              
+              // Coverflow calculations
+              const translateX = position * 320; // Horizontal spacing
+              const translateZ = isCenter ? 0 : -400; // Depth - side cards pushed back
+              const rotateY = position * -50; // Strong rotation for coverflow effect
+              const scale = isCenter ? 1.1 : 0.75; // Center card larger, sides smaller
+              const opacity = isCenter ? 1 : 0.6; // Fade side cards
+              const blur = isCenter ? 0 : 4; // Blur side cards
+              const brightness = isCenter ? 1 : 0.7; // Darken side cards
               const zIndex = isCenter ? 30 : 20 - Math.abs(position) * 10;
 
               return (
@@ -332,16 +343,20 @@ function DisasterTypesSection() {
                   className="absolute"
                   style={{ 
                     zIndex,
-                    width: '400px',
-                    height: '350px',
+                    width: '450px',
+                    height: '400px',
+                    transformStyle: 'preserve-3d',
                   }}
                   animate={{
                     x: translateX,
+                    z: translateZ,
+                    rotateY,
                     scale,
+                    opacity,
                   }}
                   transition={{
-                    duration: 0.5,
-                    ease: [0.32, 0.72, 0, 1],
+                    duration: 0.7,
+                    ease: [0.25, 0.46, 0.45, 0.94],
                   }}
                   onClick={() => {
                     if (position < 0) handlePrev();
@@ -349,9 +364,13 @@ function DisasterTypesSection() {
                   }}
                 >
                   <div 
-                    className={`relative w-full h-full rounded-md overflow-hidden shadow-2xl bg-gray-800 ${
+                    className={`relative w-full h-full rounded-lg overflow-hidden shadow-2xl bg-gray-800 ${
                       !isCenter ? 'cursor-pointer' : ''
                     }`}
+                    style={{
+                      filter: `blur(${blur}px) brightness(${brightness})`,
+                      transition: 'filter 0.7s ease',
+                    }}
                   >
                     <img
                       src={disaster.image}
@@ -359,13 +378,27 @@ function DisasterTypesSection() {
                       className="w-full h-full object-cover"
                       loading="lazy"
                     />
+                    
+                    {/* Vignette effect on side cards */}
                     {!isCenter && (
-                      <div className="absolute inset-0 bg-black/40" />
+                      <>
+                        <div className="absolute inset-0 bg-black/50" />
+                        <div 
+                          className="absolute inset-0" 
+                          style={{
+                            background: 'radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.6) 70%)',
+                          }}
+                        />
+                      </>
                     )}
                     
                     {/* Card label overlay */}
-                    <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 via-black/40 to-transparent">
-                      <h4 className="serif text-2xl text-white font-medium">{disaster.name}</h4>
+                    <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/95 via-black/60 to-transparent">
+                      <h4 className={`serif text-white font-medium transition-all duration-700 ${
+                        isCenter ? 'text-3xl' : 'text-xl'
+                      }`}>
+                        {disaster.name}
+                      </h4>
                     </div>
                   </div>
                 </motion.div>
@@ -373,21 +406,23 @@ function DisasterTypesSection() {
             })}
           </div>
 
-          {/* Navigation arrows */}
+          {/* Navigation arrows - Left and Right */}
           <button
             onClick={handlePrev}
-            className="absolute left-8 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/30 hover:bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 transition-colors"
+            className="absolute -left-16 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-md flex items-center justify-center z-50 transition-all duration-300 hover:scale-110 border-2 border-white/30 shadow-xl"
+            aria-label="Previous card"
           >
-            <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
           <button
             onClick={handleNext}
-            className="absolute right-8 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/30 hover:bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 transition-colors"
+            className="absolute -right-16 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-md flex items-center justify-center z-50 transition-all duration-300 hover:scale-110 border-2 border-white/30 shadow-xl"
+            aria-label="Next card"
           >
-            <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" />
             </svg>
           </button>
         </div>
