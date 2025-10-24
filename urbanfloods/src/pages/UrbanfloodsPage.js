@@ -5,22 +5,22 @@ import Scrollytelling from '../components/Scrollytelling'; // Import the reusabl
 import urbanfloodsVideo from '../assets/urbanfloods-animation.mp4'; // Import your NEW video asset
 
 // 1. Define the "chapters" for the urban floods story.
-// Adjust time (in seconds) to match your video.
+// Each chapter has a range (scroll percentage) and text content
 const chapters = [
   {
-    time: 0,
+    range: [0, 33],
     title: 'The Concrete Jungle',
-    description: 'Urban floods occur when rainfall overwhelms a city\'s drainage system. Unlike in nature, water can\'t be absorbed by concrete and asphalt surfaces.'
+    text: 'Urban floods occur when rainfall overwhelms a city\'s drainage system. Unlike in nature, water can\'t be absorbed by concrete and asphalt surfaces.'
   },
   {
-    time: 7, // Example: at 7 seconds
+    range: [33, 66],
     title: 'Overwhelmed Systems',
-    description: 'Drains and sewers, often clogged or outdated, quickly reach their maximum capacity. This forces excess water back onto the streets, causing rapid flooding.'
+    text: 'Drains and sewers, often clogged or outdated, quickly reach their maximum capacity. This forces excess water back onto the streets, causing rapid flooding.'
   },
   {
-    time: 14, // Example: at 14 seconds
+    range: [66, 100],
     title: 'The Ripple Effect',
-    description: 'This flash flooding damages property, disrupts transportation, and creates significant public health risks as floodwaters mix with sewage.'
+    text: 'This flash flooding damages property, disrupts transportation, and creates significant public health risks as floodwaters mix with sewage.'
   }
 ];
 
