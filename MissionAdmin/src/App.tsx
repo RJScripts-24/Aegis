@@ -1,6 +1,9 @@
 import svgPaths from "./imports/svg-fxavcettkm";
-import imgImageCityMap from "figma:asset/3cf4bb08d801cdb6a096514ccc6c6dae35dcd4d0.png";
+import imgImageCityMap from "./assets/3cf4bb08d801cdb6a096514ccc6c6dae35dcd4d0.png";
 import { useState } from "react";
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { Icon } from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import {
   Dialog,
   DialogContent,
@@ -80,13 +83,37 @@ function Navigation({ onPrioritizeClick, onBroadcastClick }: { onPrioritizeClick
 }
 
 function MapSection() {
-  const markers = [
-    { id: 1, left: '33.1%', top: '43%' },
-    { id: 2, left: '23.2%', top: '116%' },
-    { id: 3, left: '53.2%', top: '79%' },
-    { id: 4, left: '68.2%', top: '61%' },
-    { id: 5, left: '63.2%', top: '134%' }
+  // Emergency markers with lat/lng coordinates (example coordinates for a city)
+  const emergencyMarkers = [
+    { id: 1, position: [40.7489, -73.9680] as [number, number], location: 'Main St & Oak Ave', type: 'Fire Emergency', severity: 'critical' },
+    { id: 2, position: [40.7505, -73.9734] as [number, number], location: 'Central Station', type: 'Medical Emergency', severity: 'critical' },
+    { id: 3, position: [40.7520, -73.9690] as [number, number], location: 'Park Blvd near Elm', type: 'Traffic Accident', severity: 'high' },
+    { id: 4, position: [40.7475, -73.9710] as [number, number], location: 'Harbor View District', type: 'Public Safety', severity: 'high' },
+    { id: 5, position: [40.7495, -73.9650] as [number, number], location: 'Riverside Park', type: 'Evacuation', severity: 'medium' },
   ];
+
+  // Create custom icon for emergency markers
+  const createEmergencyIcon = (severity: string) => {
+    const color = severity === 'critical' ? '#ef4444' : severity === 'high' ? '#f59e0b' : '#fbbf24';
+    return new Icon({
+      iconUrl: `data:image/svg+xml;base64,${btoa(`
+        <svg width="32" height="40" viewBox="0 0 32 40" xmlns="http://www.w3.org/2000/svg">
+          <g filter="url(#shadow)">
+            <path d="M16 0C9.4 0 4 5.4 4 12c0 8 12 28 12 28s12-20 12-28c0-6.6-5.4-12-12-12z" fill="${color}"/>
+            <circle cx="16" cy="12" r="4" fill="white"/>
+          </g>
+          <defs>
+            <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+              <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.3"/>
+            </filter>
+          </defs>
+        </svg>
+      `)}`,
+      iconSize: [32, 40],
+      iconAnchor: [16, 40],
+      popupAnchor: [0, -40],
+    });
+  };
 
   return (
     <div className="bg-[#1a1a1a] rounded-xl overflow-hidden shadow-2xl border border-[#2a2a2a]">
@@ -95,41 +122,50 @@ function MapSection() {
         <h2 className="text-[rgb(255,116,116)] tracking-wide">Mission Control Screen</h2>
       </div>
 
-      {/* Map Container */}
-      <div className="relative h-[320px] overflow-hidden">
-        <img 
-          alt="City Map" 
-          className="absolute inset-0 w-full h-full object-cover opacity-80"
-          src={imgImageCityMap} 
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[rgba(0,0,0,0.6)] via-[rgba(0,0,0,0.2)] to-[rgba(0,0,0,0.4)]" />
-        
-        {/* Alert Markers */}
-        {markers.map((marker) => (
-          <div key={marker.id} className="absolute" style={{ left: marker.left, top: marker.top }}>
-            <div className="relative group cursor-pointer">
-              <div className="absolute inset-0 bg-[#ef4444] rounded-full opacity-30 animate-ping" />
-              <svg className="w-10 h-10 drop-shadow-lg" fill="none" viewBox="0 0 46 53">
-                <g filter="url(#filter0_d)">
-                  <path d={svgPaths.pa2b0e00} fill="#ef4444" stroke="#ef4444" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3.33333" />
-                  <path d={svgPaths.p2963bb00} fill="#ef4444" stroke="#ef4444" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3.33333" />
-                </g>
-                <defs>
-                  <filter colorInterpolationFilters="sRGB" filterUnits="userSpaceOnUse" height="56" id="filter0_d" width="56" x="-5" y="-1.66667">
-                    <feFlood floodOpacity="0" result="BackgroundImageFix" />
-                    <feColorMatrix in="SourceAlpha" result="hardAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" />
-                    <feOffset dy="4" />
-                    <feGaussianBlur stdDeviation="4" />
-                    <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.15 0" />
-                    <feBlend in2="BackgroundImageFix" mode="normal" result="effect1_dropShadow" />
-                    <feBlend in="SourceGraphic" in2="effect1_dropShadow" mode="normal" result="shape" />
-                  </filter>
-                </defs>
-              </svg>
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-white border-2 border-[#ef4444] rounded-full" />
-            </div>
-          </div>
-        ))}
+      {/* Interactive Map Container */}
+      <div style={{ height: '420px', width: '100%', position: 'relative' }}>
+        <MapContainer
+          center={[40.7489, -73.9680]}
+          zoom={14}
+          style={{ height: '420px', width: '100%', backgroundColor: '#0a0a0a' }}
+          zoomControl={true}
+          scrollWheelZoom={true}
+        >
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          />
+          
+          {emergencyMarkers.map((marker) => (
+            <Marker
+              key={marker.id}
+              position={marker.position}
+              icon={createEmergencyIcon(marker.severity)}
+            >
+              <Popup className="custom-popup">
+                <div className="bg-[#1a1a1a] p-3 rounded-lg text-white min-w-[200px]">
+                  <div className="flex items-center gap-2 mb-2">
+                    <AlertTriangle className={`w-4 h-4 ${
+                      marker.severity === 'critical' ? 'text-[#ef4444]' : 
+                      marker.severity === 'high' ? 'text-[#f59e0b]' : 'text-[#fbbf24]'
+                    }`} />
+                    <span className={`text-xs font-semibold uppercase ${
+                      marker.severity === 'critical' ? 'text-[#ef4444]' : 
+                      marker.severity === 'high' ? 'text-[#f59e0b]' : 'text-[#fbbf24]'
+                    }`}>
+                      {marker.severity}
+                    </span>
+                  </div>
+                  <h3 className="font-semibold mb-1">{marker.type}</h3>
+                  <p className="text-sm text-[#a0a0a0] flex items-center gap-1">
+                    <MapPin className="w-3 h-3" />
+                    {marker.location}
+                  </p>
+                </div>
+              </Popup>
+            </Marker>
+          ))}
+        </MapContainer>
       </div>
     </div>
   );
@@ -279,17 +315,7 @@ function TriageFeed() {
 function BroadcastDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const [alertType, setAlertType] = useState('emergency');
   const [message, setMessage] = useState('');
-  const [targetZones, setTargetZones] = useState<Set<string>>(new Set(['all']));
   const [isSending, setIsSending] = useState(false);
-
-  const zones = [
-    { id: 'all', name: 'All Zones', count: 7800 },
-    { id: 'downtown', name: 'Downtown Financial District', count: 2400 },
-    { id: 'central', name: 'Central Station Area', count: 1800 },
-    { id: 'riverside', name: 'Riverside Park Zone', count: 1200 },
-    { id: 'harbor', name: 'East Harbor District', count: 950 },
-    { id: 'westside', name: 'Westside Residential', count: 650 }
-  ];
 
   const alertTypes = [
     {
@@ -299,7 +325,10 @@ function BroadcastDialog({ open, onOpenChange }: { open: boolean; onOpenChange: 
       color: 'text-[#ef4444]',
       bgColor: 'bg-[#ef4444]/10',
       borderColor: 'border-[#ef4444]/30',
-      description: 'Critical situation requiring immediate action'
+      description: 'Critical situation requiring immediate action',
+      buttonText: 'Send Emergency Alert',
+      buttonIcon: Send,
+      buttonStyle: 'bg-[#ef4444] hover:bg-[#dc2626]'
     },
     {
       id: 'warning',
@@ -308,7 +337,10 @@ function BroadcastDialog({ open, onOpenChange }: { open: boolean; onOpenChange: 
       color: 'text-[#f59e0b]',
       bgColor: 'bg-[#f59e0b]/10',
       borderColor: 'border-[#f59e0b]/30',
-      description: 'Important alert requiring attention'
+      description: 'Important alert requiring attention',
+      buttonText: 'Send Warning Alert',
+      buttonIcon: Send,
+      buttonStyle: 'bg-[#f59e0b] hover:bg-[#d97706]'
     },
     {
       id: 'info',
@@ -317,7 +349,10 @@ function BroadcastDialog({ open, onOpenChange }: { open: boolean; onOpenChange: 
       color: 'text-[#3b82f6]',
       bgColor: 'bg-[#3b82f6]/10',
       borderColor: 'border-[#3b82f6]/30',
-      description: 'General information or updates'
+      description: 'General information or updates',
+      buttonText: 'Send Info Alert',
+      buttonIcon: Send,
+      buttonStyle: 'bg-[#3b82f6] hover:bg-[#2563eb]'
     },
     {
       id: 'advisory',
@@ -326,51 +361,27 @@ function BroadcastDialog({ open, onOpenChange }: { open: boolean; onOpenChange: 
       color: 'text-[#8b5cf6]',
       bgColor: 'bg-[#8b5cf6]/10',
       borderColor: 'border-[#8b5cf6]/30',
-      description: 'Guidance and recommendations'
+      description: 'Guidance and recommendations',
+      buttonText: 'Send Advisory Alert',
+      buttonIcon: Send,
+      buttonStyle: 'bg-[#8b5cf6] hover:bg-[#7c3aed]'
     }
   ];
 
-  const toggleZone = (zoneId: string) => {
-    const newTargets = new Set(targetZones);
-    
-    if (zoneId === 'all') {
-      if (newTargets.has('all')) {
-        newTargets.clear();
-      } else {
-        newTargets.clear();
-        newTargets.add('all');
-      }
-    } else {
-      newTargets.delete('all');
-      if (newTargets.has(zoneId)) {
-        newTargets.delete(zoneId);
-      } else {
-        newTargets.add(zoneId);
-      }
-    }
-    
-    setTargetZones(newTargets);
-  };
-
   const handleSendBroadcast = () => {
-    if (!message.trim() || targetZones.size === 0) return;
+    if (!message.trim()) return;
     
     setIsSending(true);
     setTimeout(() => {
       setIsSending(false);
       setMessage('');
-      setTargetZones(new Set(['all']));
+      setAlertType('emergency');
       onOpenChange(false);
     }, 2000);
   };
 
   const selectedType = alertTypes.find(t => t.id === alertType)!;
-  const totalAffected = targetZones.has('all') 
-    ? zones[0].count 
-    : Array.from(targetZones).reduce((sum, id) => {
-        const zone = zones.find(z => z.id === id);
-        return sum + (zone?.count || 0);
-      }, 0);
+  const ButtonIcon = selectedType.buttonIcon;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -433,10 +444,11 @@ function BroadcastDialog({ open, onOpenChange }: { open: boolean; onOpenChange: 
               onChange={(e) => setMessage(e.target.value)}
               className="min-h-[120px] bg-[#0f0f0f] border-[#2a2a2a] text-white placeholder:text-[#666] focus:border-[#6366f1] resize-none"
             />
-            <div className="mt-2 text-xs text-[#666] flex justify-between">
+            <div className="mt-2 text-xs text-[#666]">
               <span>This message will be displayed on maps, alerts, and notification pages</span>
             </div>
           </div>
+
           {/* Preview */}
           {message && (
             <div>
@@ -445,12 +457,12 @@ function BroadcastDialog({ open, onOpenChange }: { open: boolean; onOpenChange: 
                 <div className="flex items-start gap-3">
                   <selectedType.icon className={`w-5 h-5 ${selectedType.color} mt-0.5`} />
                   <div className="flex-1">
-                    <div className={`mb-1 ${selectedType.color}`}>
+                    <div className={`mb-1 font-semibold ${selectedType.color}`}>
                       {selectedType.label}
                     </div>
                     <div className="text-[#e0e0e0]">{message}</div>
                     <div className="mt-2 text-xs text-[#666]">
-                      Broadcasting to {totalAffected.toLocaleString()} people
+                      Broadcasting to 7,800 people
                     </div>
                   </div>
                 </div>
@@ -462,15 +474,7 @@ function BroadcastDialog({ open, onOpenChange }: { open: boolean; onOpenChange: 
         {/* Actions */}
         <div className="flex items-center justify-between pt-4 border-t border-[#2a2a2a]">
           <div className="text-sm text-[#a0a0a0]">
-            {targetZones.size > 0 ? (
-              <span>
-                Broadcasting to {targetZones.has('all') ? 'all zones' : `${targetZones.size} zone${targetZones.size > 1 ? 's' : ''}`}
-                {' • '}
-                {totalAffected.toLocaleString()} people
-              </span>
-            ) : (
-              <span>Select at least one target zone</span>
-            )}
+            Broadcasting to all zones • 7,800 people
           </div>
           <div className="flex gap-3">
             <button
@@ -481,18 +485,45 @@ function BroadcastDialog({ open, onOpenChange }: { open: boolean; onOpenChange: 
             </button>
             <button
               onClick={handleSendBroadcast}
-              disabled={!message.trim() || targetZones.size === 0 || isSending}
-              className={`px-6 py-2.5 rounded-lg transition-all duration-200 flex items-center gap-2 ${
-                !message.trim() || targetZones.size === 0 || isSending
-                  ? 'bg-[#2a2a2a] text-[#666] cursor-not-allowed'
+              disabled={!message.trim() || isSending}
+              style={{
+                backgroundColor: !message.trim() || isSending
+                  ? '#2a2a2a'
                   : alertType === 'emergency'
-                  ? 'bg-gradient-to-r from-[#ef4444] to-[#dc2626] text-white hover:shadow-lg hover:shadow-[#ef4444]/20'
+                  ? '#ef4444'
                   : alertType === 'warning'
-                  ? 'bg-gradient-to-r from-[#f59e0b] to-[#d97706] text-white hover:shadow-lg hover:shadow-[#f59e0b]/20'
+                  ? '#f59e0b'
                   : alertType === 'info'
-                  ? 'bg-gradient-to-r from-[#3b82f6] to-[#2563eb] text-white hover:shadow-lg hover:shadow-[#3b82f6]/20'
-                  : 'bg-gradient-to-r from-[#8b5cf6] to-[#7c3aed] text-white hover:shadow-lg hover:shadow-[#8b5cf6]/20'
+                  ? '#3b82f6'
+                  : '#8b5cf6'
+              }}
+              className={`px-6 py-2.5 rounded-lg transition-all duration-200 flex items-center gap-2 shadow-lg ${
+                !message.trim() || isSending
+                  ? 'text-[#666] cursor-not-allowed'
+                  : 'text-white'
               }`}
+              onMouseEnter={(e) => {
+                if (!message.trim() || isSending) return;
+                const hoverColor = alertType === 'emergency'
+                  ? '#dc2626'
+                  : alertType === 'warning'
+                  ? '#d97706'
+                  : alertType === 'info'
+                  ? '#2563eb'
+                  : '#7c3aed';
+                e.currentTarget.style.backgroundColor = hoverColor;
+              }}
+              onMouseLeave={(e) => {
+                if (!message.trim() || isSending) return;
+                const normalColor = alertType === 'emergency'
+                  ? '#ef4444'
+                  : alertType === 'warning'
+                  ? '#f59e0b'
+                  : alertType === 'info'
+                  ? '#3b82f6'
+                  : '#8b5cf6';
+                e.currentTarget.style.backgroundColor = normalColor;
+              }}
             >
               {isSending ? (
                 <>
@@ -504,8 +535,8 @@ function BroadcastDialog({ open, onOpenChange }: { open: boolean; onOpenChange: 
                 </>
               ) : (
                 <>
-                  <Send className="w-4 h-4" />
-                  Send Broadcast
+                  <ButtonIcon className="w-4 h-4" />
+                  {selectedType.buttonText}
                 </>
               )}
             </button>
