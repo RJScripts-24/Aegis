@@ -1,6 +1,6 @@
-// src/components/Scrollytelling.js
+// src/components/Scrollytelling.jsx
 
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import './Scrollytelling.css'; // Import the corresponding styles
 
 // The Core Engine component: Handles scroll logic, video scrubbing, and text display
@@ -30,7 +30,6 @@ const Scrollytelling = ({ videoSrc, chapters }) => {
       const scrollDistance = window.scrollY - (containerTop - viewportHeight / 2);
 
       // The total scrollable distance for the scrollytelling section
-      // The total height of the chapters minus the viewport height gives the scrollable distance
       const totalScrollHeight = containerHeight - viewportHeight;
       
       // Calculate scroll percentage (0 to 100)
@@ -39,15 +38,24 @@ const Scrollytelling = ({ videoSrc, chapters }) => {
 
       // Calculate the corresponding video time
       if (video.duration) {
-        video.currentTime = (scrollPercent / 100) * video.duration;
+        const targetTime = (scrollPercent / 100) * video.duration;
+        video.currentTime = targetTime;
       }
 
-      // Determine the active chapter based on scroll percentage
-      const currentChapter = chapters.find(chapter => 
-        scrollPercent >= chapter.range[0] && scrollPercent <= chapter.range[1]
-      );
-      
-      setActiveChapter(currentChapter);
+      // Determine the active chapter based on video current time
+      if (video.duration) {
+        const currentTime = video.currentTime;
+        let foundChapter = null;
+        
+        for (let i = chapters.length - 1; i >= 0; i--) {
+          if (currentTime >= chapters[i].time) {
+            foundChapter = chapters[i];
+            break;
+          }
+        }
+        
+        setActiveChapter(foundChapter);
+      }
     };
 
     // Attach the event listener and run once on mount
@@ -58,10 +66,9 @@ const Scrollytelling = ({ videoSrc, chapters }) => {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [chapters]); // Rerun if the chapters array changes (though it shouldn't in this case)
+  }, [chapters]); // Rerun if the chapters array changes
 
   // Calculate the height needed to make the scrolling last the desired time
-  // This is based on the number of chapters and a multiplier for scroll speed/length
   const totalScrollHeight = chapters.length * 150; // Use a multiplier (e.g., 150vh per chapter)
   
   return (
@@ -87,8 +94,7 @@ const Scrollytelling = ({ videoSrc, chapters }) => {
         {activeChapter ? (
           <div className="chapter-text fade-in">
             <h2>{activeChapter.title}</h2>
-            {/* Using dangerouslySetInnerHTML to allow for bolding/formatting in the text */}
-            <p dangerouslySetInnerHTML={{ __html: activeChapter.text }} /> 
+            <p>{activeChapter.description}</p>
           </div>
         ) : (
           // Optional: Display a placeholder when no chapter is active

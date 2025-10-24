@@ -1,4 +1,4 @@
-// src/pages/HeatwavesPage.js
+// src/pages/HeatwavesPage.jsx
 
 import React from 'react';
 import Scrollytelling from '../components/Scrollytelling'; // Import the reusable component
