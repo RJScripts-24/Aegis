@@ -1,8 +1,8 @@
 // src/pages/BhopalgasPage.js
 
 import React from 'react';
-import Scrollytelling from '../components/Scrollytelling'; // Import the reusable component
-import bhopalgasVideo from '../assets/bhopalgas-animation.mp4'; // Import your NEW video asset
+import Scrollytelling from '../componenets/Scrollytelling.jsx'; // Import the reusable component
+import bhopalgasVideo from '/bhopal-animation.mp4'; // Import your NEW video asset
 
 // 1. Define the "chapters" for the Bhopal gas tragedy story.
 // Adjust time (in seconds) to match your video.
