@@ -15,8 +15,11 @@ function Scrollytelling({ videoSrc, chapters }) {
         if (!video || !container) return;
 
         const handleLoad = () => {
-            video.currentTime = 0;
-            video.pause();
+            // ensure the video plays and loops independently of scroll
+            try {
+                video.loop = true;
+                const p = video.play(); if (p && typeof p.then === 'function') p.catch(() => {});
+            } catch (e) {}
         };
 
         const handleScroll = () => {
@@ -28,11 +31,7 @@ function Scrollytelling({ videoSrc, chapters }) {
             if (s < 0) s = 0;
             if (s > 1) s = 1;
 
-            requestAnimationFrame(() => {
-                if (video.readyState >= 3) {
-                    video.currentTime = video.duration * s;
-                }
-            });
+            // keep the video playing independently; do not scrub to scroll position
 
             let currentChapter = null;
             for (const chapter of chapters) {

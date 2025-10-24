@@ -1,6 +1,6 @@
 // src/components/Scrollytelling.jsx
 
-import React, { useRef, useEffect, useState, useMemo } from 'react';
+import React, { useRef, useEffect, useState, useMemo, useCallback } from 'react';
 import './Scrollytelling.css'; // Import the corresponding styles
 
 // Helper to keep percentages in the expected range
@@ -37,64 +37,93 @@ const Scrollytelling = ({ videoSrc, chapters = [] }) => {
     });
   }, [chapters]);
 
-  // 2. State for active chapter (text to display)
-  const [activeChapter, setActiveChapter] = useState(() => normalizedChapters[0] ?? null);
+  // 2. State for active chapter index (text to display)
+  const [activeIndex, setActiveIndex] = useState(0);
+  const activeIndexRef = useRef(0);
 
   useEffect(() => {
-    setActiveChapter(normalizedChapters[0] ?? null);
+    // reset active index when chapters change
+    activeIndexRef.current = 0;
+    setActiveIndex(0);
   }, [normalizedChapters]);
 
   // 3. Effect to handle scroll-to-video scrubbing and chapter logic
+  // animation refs
+  const rafRef = useRef(null);
+  const overlayRef = useRef(null);
+  const overlayTargetYRef = useRef(0);
+  const overlayYRef = useRef(0);
+  const rawScrollPercentRef = useRef(0);
+
+  // equal centers for chapters
+  const chapterCenters = React.useMemo(() => normalizedChapters.map((_, i) => ((i + 0.5) / normalizedChapters.length) * 100), [normalizedChapters]);
+
+  const smoothLoop = useCallback(() => {
+    const overlayEl = overlayRef.current;
+    if (overlayEl) {
+      const curY = overlayYRef.current || 0;
+      const targetY = overlayTargetYRef.current || 0;
+      const dy = targetY - curY;
+      if (Math.abs(dy) > 0.2) {
+        overlayYRef.current = curY + dy * 0.2;
+      } else {
+        overlayYRef.current = targetY;
+      }
+      overlayEl.style.transform = `translateY(${overlayYRef.current}px)`;
+    }
+    rafRef.current = requestAnimationFrame(smoothLoop);
+  }, []);
+
+  useEffect(() => {
+    rafRef.current = requestAnimationFrame(smoothLoop);
+    return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
+  }, [smoothLoop]);
+
   useEffect(() => {
     const container = containerRef.current;
-    const video = videoRef.current;
+    if (!container || normalizedChapters.length === 0) return;
 
-    if (!container || !video || normalizedChapters.length === 0) return;
-
-    // The scroll handler function
     const handleScroll = () => {
-      // Calculate scroll position relative to the container
       const containerTop = container.offsetTop;
       const containerHeight = container.offsetHeight;
       const viewportHeight = window.innerHeight;
-
-      // The scroll distance within the active area
       const scrollDistance = window.scrollY - (containerTop - viewportHeight / 2);
-
-      // The total scrollable distance for the scrollytelling section
       const scrollableHeight = Math.max(containerHeight - viewportHeight, 1);
-
-      // Calculate scroll percentage (0 to 100)
       let scrollPercent = (scrollDistance / scrollableHeight) * 100;
       scrollPercent = clampPercent(scrollPercent);
 
-      // Calculate the corresponding video time
-      if (video.duration) {
-        video.currentTime = (scrollPercent / 100) * video.duration;
+      rawScrollPercentRef.current = scrollPercent;
+
+      // overlay parallax
+      overlayTargetYRef.current = ((scrollPercent - 50) / 50) * 40;
+
+      // nearest center with hysteresis
+      let closest = 0;
+      let minDiff = Infinity;
+      chapterCenters.forEach((c, i) => { const d = Math.abs(scrollPercent - c); if (d < minDiff) { minDiff = d; closest = i; } });
+      const prev = activeIndexRef.current;
+      if (closest !== prev) {
+        const prevDist = Math.abs(scrollPercent - chapterCenters[prev]);
+        const newDist = Math.abs(scrollPercent - chapterCenters[closest]);
+        const hysteresis = 4;
+        if (newDist + hysteresis < prevDist) {
+          activeIndexRef.current = closest;
+          setActiveIndex(closest);
+        }
       }
-
-      // Determine the active chapter based on scroll percentage
-      const currentChapter =
-        normalizedChapters.find(({ range }) => scrollPercent >= range[0] && scrollPercent <= range[1]) ??
-        normalizedChapters[normalizedChapters.length - 1];
-
-      setActiveChapter(currentChapter ?? null);
     };
 
-    // Attach the event listener and run once on mount
     window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll(); // Initial call to set state correctly
-
-    // Cleanup function to remove the listener
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [normalizedChapters]);
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [chapterCenters, normalizedChapters]);
 
   // Calculate the height needed to make the scrolling last the desired time
-  // This is based on the number of chapters and a multiplier for scroll speed/length
-  const totalScrollHeight = normalizedChapters.length * 150; // Use a multiplier (e.g., 150vh per chapter)
-  
+  const [videoDuration, setVideoDuration] = useState(null);
+  const [scrollVh, setScrollVh] = useState(normalizedChapters.length * 150);
+
+  useEffect(() => { setScrollVh(Math.max(normalizedChapters.length * 100, Math.ceil((videoDuration || 0) * 20))); }, [videoDuration, normalizedChapters.length]);
+
   return (
     // The main container. Its height dictates the scrollable area
     <div 
@@ -111,25 +140,20 @@ const Scrollytelling = ({ videoSrc, chapters = [] }) => {
           preload="auto"
           muted
           playsInline
-          autoPlay
           loop
+          onLoadedMetadata={() => {
+            const vid = videoRef.current; if (!vid) return; const dur = vid.duration; if (dur && !isNaN(dur)) { setVideoDuration(dur); try { vid.loop = true; const p = vid.play(); if (p && typeof p.then === 'function') p.catch(() => {}); } catch (e) {} }
+          }}
           aria-hidden="true"
         />
       </div>
 
       {/* The overlay content box */}
       <div className="scrollytelling-chapter-overlay">
-        {activeChapter ? (
-          <div className="chapter-text fade-in">
-            <h2>{activeChapter.title}</h2>
-            <p>{activeChapter.text || activeChapter.description}</p>
-          </div>
-        ) : (
-          // Optional: Display a placeholder when no chapter is active
-          <div className="chapter-text fade-out">
-            {/* Fade out content */}
-          </div>
-        )}
+        <div ref={overlayRef} className="chapter-text fade-in" style={{ transform: 'translateY(0px)', opacity: 1 }}>
+          <h2>{(normalizedChapters[activeIndex] && normalizedChapters[activeIndex].title) || ''}</h2>
+          <p dangerouslySetInnerHTML={{ __html: (normalizedChapters[activeIndex] && normalizedChapters[activeIndex].text) || '' }} />
+        </div>
       </div>
     </div>
   );

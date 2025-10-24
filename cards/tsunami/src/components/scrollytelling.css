@@ -27,7 +27,7 @@
 .story-text {
     opacity: 0;
     transform: translateY(30px) scale(0.98);
-    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    transition: opacity 0.18s ease-out, transform 0.18s ease-out;
     /* removed the dark background box so text sits directly on the video */
     background: transparent;
     color: white;
@@ -39,6 +39,7 @@
     position: absolute;
     /* subtle shadow for readability over busy video */
     text-shadow: 0 8px 18px rgba(0,0,0,0.65), 0 2px 4px rgba(0,0,0,0.55);
+    will-change: transform, opacity;
     -webkit-font-smoothing: antialiased;
 }
 

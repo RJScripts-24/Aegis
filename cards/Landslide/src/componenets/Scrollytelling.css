@@ -41,7 +41,7 @@
   width: 100%;
   /* Places the text box */
   display: flex;
-  justify-content: flex-start; /* Aligns text box to the left */
+  justify-content: center; /* Center the text box horizontally */
   align-items: center; /* Aligns text box vertically center */
   padding: 0 5vw; /* Adds 5% padding on the left/right */
   
@@ -56,13 +56,15 @@
  * This is the styled box holding the title and paragraph.
  */
 .chapter-text {
-  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black bg */
+  background-color: rgba(0, 0, 0, 0.5); /* Slightly more transparent */
   color: white;
   padding: 24px 30px;
   border-radius: 8px;
-  max-width: 450px; /* Limits the width of the text box */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  border-left: 5px solid #4a90e2; /* Accent color border */
+  max-width: 600px; /* Slightly wider to accommodate content */
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+  /* removed colored border for a cleaner look */
+  backdrop-filter: blur(4px);
+  will-change: transform, opacity;
 }
 
 .chapter-text h2 {
@@ -81,10 +83,10 @@
  */
 .fade-in {
   opacity: 1;
-  transition: opacity 0.5s ease-in;
+  transition: opacity 0.18s ease-in;
 }
 
 .fade-out {
   opacity: 0;
-  transition: opacity 0.3s ease-out;
+  transition: opacity 0.12s ease-out;
 }

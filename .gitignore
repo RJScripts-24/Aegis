@@ -1,0 +1,58 @@
+# Root .gitignore for Aegis repository
+
+# Node / JS
+node_modules/
+/.pnp/
+.pnp.js
+dist/
+build/
+.env
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Logs
+*.log
+
+# Ignore large media/animation files in project cards (mp4, mov, webm)
+# If you prefer Git LFS, track these instead (see notes below).
+**/src/assets/*.mp4
+**/src/assets/*.mov
+**/src/assets/*.webm
+**/public/videos/*
+**/assets/*.mp4
+**/assets/*.mov
+
+# Optional: ignore other heavy file types
+**/*.psd
+**/*.ai
+**/*.zip
+
+# Keep package manager lockfiles and config files tracked, but ignore node artifacts
+
+# End of .gitignore
+
+# Notes:
+# - If these large files are already committed, adding .gitignore won't remove them from history.
+#   To untrack specific files already committed, run:
+#     git rm --cached "path/to/large-file.mp4"
+#     git commit -m "Remove large binary from tracking"
+#     git push
+# - For large binaries consider using Git LFS:
+#     git lfs install
+#     git lfs track "*.mp4"
+#     git add .gitattributes
+#     git add path/to/large-file.mp4
+#     git commit -m "Move mp4 to Git LFS"
+#     git push
