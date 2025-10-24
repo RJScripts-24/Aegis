@@ -19,8 +19,11 @@ function App() {
     return (
         <BrowserRouter>
             <Routes>
+                {/* make the tsunami page the landing page */}
+                <Route path="/" element={<TsunamiPage />} />
                 <Route path="/tsunami" element={<TsunamiPage />} />
-                <Route path="/" element={<HomePage />} />
+                {/* keep the previous home available at /home */}
+                <Route path="/home" element={<HomePage />} />
             </Routes>
         </BrowserRouter>
     );
