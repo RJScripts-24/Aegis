@@ -1,0 +1,10 @@
+# Git LFS attribute rules for large media files used by the Aegis repo
+# These tell Git to handle the listed file types using Git LFS
+
+*.mp4 filter=lfs diff=lfs merge=lfs -text
+*.mov filter=lfs diff=lfs merge=lfs -text
+*.webm filter=lfs diff=lfs merge=lfs -text
+*.ogg filter=lfs diff=lfs merge=lfs -text
+
+# You can add more extensions here if needed, e.g. .psd, .zip
+# *.psd filter=lfs diff=lfs merge=lfs -text
