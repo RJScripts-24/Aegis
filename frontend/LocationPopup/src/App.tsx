@@ -22,7 +22,7 @@ export default function App() {
           console.log('Location captured:', { latitude, longitude });
           
           // Redirect to Map Public after location permission granted
-          window.location.href = import.meta.env.VITE_MAP_PUBLIC_URL || 'http://localhost:3000';
+          window.location.href = import.meta.env.VITE_MAP_PUBLIC_URL || '/map';
         },
         (error) => {
           setIsGettingLocation(false);

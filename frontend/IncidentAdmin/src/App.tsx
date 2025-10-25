@@ -32,7 +32,8 @@ export default function App() {
     const fetchIncidents = async () => {
       try {
         console.log('🔄 Fetching incidents from backend...');
-        const response = await fetch('http://localhost:5000/api/incidents/admin', {
+        const apiUrl = import.meta.env.VITE_API_URL || '/api';
+        const response = await fetch(`${apiUrl}/incidents/admin`, {
           headers: {
             'Content-Type': 'application/json',
             // Add auth token if needed
@@ -92,7 +93,8 @@ export default function App() {
     
     setIsUpdating(true);
     try {
-      const response = await fetch(`http://localhost:5000/api/incidents/${selectedIncident._id}`, {
+      const apiUrl = import.meta.env.VITE_API_URL || '/api';
+      const response = await fetch(`${apiUrl}/incidents/${selectedIncident._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

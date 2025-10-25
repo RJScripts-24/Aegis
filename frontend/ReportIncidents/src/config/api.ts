@@ -1,7 +1,7 @@
 // API Configuration
 export const API_CONFIG = {
-  BASE_URL: import.meta.env.VITE_API_URL || 'http://localhost:5000',
-  SOCKET_URL: import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000',
+  BASE_URL: import.meta.env.VITE_API_URL || '/api',
+  SOCKET_URL: import.meta.env.VITE_SOCKET_URL || window.location.origin,
   TIMEOUT: 30000, // 30 seconds
 };
 

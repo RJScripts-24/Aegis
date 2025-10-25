@@ -130,7 +130,7 @@ function HeroSection() {
           <Button
             size="lg"
             className="bg-white text-black hover:bg-gray-200 px-8 py-6 text-base"
-            onClick={() => window.location.href = import.meta.env.VITE_MAP_PUBLIC_URL || 'http://localhost:3001'}
+            onClick={() => window.location.href = import.meta.env.VITE_MAP_PUBLIC_URL || '/map'}
           >
             Get Alerts
           </Button>
@@ -138,7 +138,7 @@ function HeroSection() {
             size="lg"
             variant="ghost"
             className="text-white border border-white hover:bg-white/10 px-8 py-6 text-base"
-            onClick={() => window.location.href = import.meta.env.VITE_INCIDENT_ADMIN_URL || 'http://localhost:3003'}
+            onClick={() => window.location.href = import.meta.env.VITE_INCIDENT_ADMIN_URL || '/admin/incidents'}
           >
             Admin Login
           </Button>

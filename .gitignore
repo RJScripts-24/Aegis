@@ -12,12 +12,32 @@ dist-ssr/
 build/
 *.local
 
-# Environment variables
+# Environment variables - IMPORTANT: Keep .env files local only!
 .env
 .env.local
+.env.development
 .env.development.local
+.env.test
 .env.test.local
+.env.production
 .env.production.local
+.env*.local
+
+# Keep example files for reference
+!.env.example
+
+# Frontend environment files
+frontend/*/.env
+frontend/*/.env.local
+frontend/*/.env.development
+frontend/*/.env.development.local
+frontend/*/.env.test
+frontend/*/.env.test.local
+frontend/*/.env.production
+frontend/*/.env.production.local
+
+# Keep example files in frontend
+!frontend/*/.env.example
 
 # Editor directories and files
 .vscode/*

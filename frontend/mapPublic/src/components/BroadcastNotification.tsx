@@ -49,7 +49,8 @@ export function BroadcastNotification() {
   // Fetch broadcast alerts from backend
   const fetchBroadcastAlerts = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/alerts/broadcast');
+      const apiUrl = import.meta.env.VITE_API_URL || '/api';
+      const response = await fetch(`${apiUrl}/alerts/broadcast`);
       if (response.ok) {
         const data = await response.json();
         console.log('📢 Broadcast alerts received:', data);

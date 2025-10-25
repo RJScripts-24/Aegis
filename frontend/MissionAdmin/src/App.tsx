@@ -61,10 +61,10 @@ function Navigation({ onPrioritizeClick, onBroadcastClick }: { onPrioritizeClick
     } else if (itemId === 'broadcast') {
       onBroadcastClick();
     } else if (itemId === 'incidents') {
-      window.location.href = import.meta.env.VITE_INCIDENT_ADMIN_URL || 'http://localhost:3004';
+      window.location.href = import.meta.env.VITE_INCIDENT_ADMIN_URL || '/admin/incidents';
     } else if (itemId === 'logout') {
       // Redirect to Landing Page
-      window.location.href = import.meta.env.VITE_LANDING_PAGE_URL || 'http://localhost:5173';
+      window.location.href = import.meta.env.VITE_LANDING_PAGE_URL || '/';
     }
   };
 
@@ -842,7 +842,8 @@ function BroadcastDialog({ open, onOpenChange }: { open: boolean; onOpenChange: 
     setIsSending(true);
     
     try {
-      const response = await fetch('http://localhost:5000/api/alerts/broadcast', {
+      const apiUrl = import.meta.env.VITE_API_URL || '/api';
+      const response = await fetch(`${apiUrl}/alerts/broadcast`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1392,7 +1393,8 @@ export default function App() {
     const fetchIncidents = async () => {
       try {
         console.log('Fetching incidents from backend...');
-        const response = await fetch('http://localhost:5000/api/incidents/admin', {
+        const apiUrl = import.meta.env.VITE_API_URL || '/api';
+        const response = await fetch(`${apiUrl}/incidents/admin`, {
           headers: {
             // Add auth token if needed
             // 'Authorization': `Bearer ${token}`
