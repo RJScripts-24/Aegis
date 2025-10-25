@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ImageWithFallback } from './components/figma/ImageWithFallback';
 import { Button } from './components/ui/button';
 import { ChevronDown } from 'lucide-react';
+import { APP_URLS } from './config/urls';
 
 export default function App() {
   return (
@@ -130,7 +131,7 @@ function HeroSection() {
           <Button
             size="lg"
             className="bg-white text-black hover:bg-gray-200 px-8 py-6 text-base"
-            onClick={() => window.location.href = import.meta.env.VITE_MAP_PUBLIC_URL || '/map'}
+            onClick={() => window.location.href = APP_URLS.MAP_PUBLIC}
           >
             Get Alerts
           </Button>
@@ -138,7 +139,7 @@ function HeroSection() {
             size="lg"
             variant="ghost"
             className="text-white border border-white hover:bg-white/10 px-8 py-6 text-base"
-            onClick={() => window.location.href = import.meta.env.VITE_INCIDENT_ADMIN_URL || '/admin/incidents'}
+            onClick={() => window.location.href = APP_URLS.INCIDENT_ADMIN}
           >
             Admin Login
           </Button>

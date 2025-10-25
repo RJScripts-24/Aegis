@@ -5,6 +5,7 @@ import { LayersPanel } from './components/LayersPanel';
 import { BroadcastNotification } from './components/BroadcastNotification';
 import { AlertCircle, Camera, Layers, Locate } from 'lucide-react';
 import { toast } from 'sonner';
+import { APP_URLS } from './config/urls';
 
 interface Layer {
   id: string;
@@ -250,11 +251,10 @@ export default function App() {
     }
   };
 
+  // Handle report incident button click
   const handleReportIncident = () => {
-    window.location.href = import.meta.env.VITE_REPORT_INCIDENTS_URL || '/report-incident';
-  };
-
-  const handleEmergencyContacts = () => {
+    window.location.href = APP_URLS.REPORT_INCIDENTS;
+  };  const handleEmergencyContacts = () => {
     toast.info('Emergency Contacts', {
       description: 'Loading emergency contact information...'
     });

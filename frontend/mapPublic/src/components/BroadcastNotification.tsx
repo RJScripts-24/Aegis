@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, AlertTriangle, AlertCircle, Info, Bell } from 'lucide-react';
+import { APP_URLS } from '../config/urls';
 
 interface BroadcastAlert {
   _id: string;
@@ -49,7 +50,7 @@ export function BroadcastNotification() {
   // Fetch broadcast alerts from backend
   const fetchBroadcastAlerts = async () => {
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || '/api';
+      const apiUrl = APP_URLS.BACKEND_API;
       const response = await fetch(`${apiUrl}/alerts/broadcast`);
       if (response.ok) {
         const data = await response.json();
