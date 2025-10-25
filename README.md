@@ -1,4 +1,4 @@
-# 🛡️ AEGIS - Advanced Emergency Guidance and Incident System
+#  AEGIS - Advanced Emergency Guidance and Incident System
 
 [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
@@ -21,28 +21,28 @@ A comprehensive emergency response and disaster management system that enables r
 - [Contributing](#-contributing)
 - [License](#-license)
 
-## ✨ Features
+## Features
 
 ### Core Functionality
-- 🚨 **Real-time Incident Reporting** - Citizens can report emergencies with photos, location, and details
-- 📍 **Live Location Tracking** - Real-time GPS tracking for field agents and emergency responders
-- 🗺️ **Interactive Maps** - Visualize incidents, risk zones, and resources on dynamic maps
-- 📢 **Emergency Alerts** - Broadcast alerts to subscribers via SMS and web notifications
-- 👥 **Mission Management** - Coordinate emergency response teams and operations
-- 🔔 **Check-in System** - Safety check-ins for citizens in affected areas
-- 📊 **Admin Dashboard** - Monitor and manage incidents, alerts, and operations
+-  **Real-time Incident Reporting** - Citizens can report emergencies with photos, location, and details
+-  **Live Location Tracking** - Real-time GPS tracking for field agents and emergency responders
+-  **Interactive Maps** - Visualize incidents, risk zones, and resources on dynamic maps
+-  **Emergency Alerts** - Broadcast alerts to subscribers via SMS and web notifications
+-  **Mission Management** - Coordinate emergency response teams and operations
+-  **Check-in System** - Safety check-ins for citizens in affected areas
+-  **Admin Dashboard** - Monitor and manage incidents, alerts, and operations
 
 ### Disaster Types Supported
-- 🌊 **Tsunami** - Tsunami warnings and evacuation guidance
-- 🌪️ **Cyclone** - Cyclone tracking and safety protocols
-- 🌡️ **Heatwaves** - Heat advisory and safety measures
-- ⚗️ **Chemical Hazards** - Chemical spill response and containment
-- ☢️ **Nuclear Emergencies** - Radiation safety and evacuation
-- 🏔️ **Landslides** - Landslide warnings and prevention
-- 🌊 **Urban Floods** - Flood monitoring and response
-- 🌍 **Earthquakes** - Seismic activity tracking and safety
+-  **Tsunami** - Tsunami warnings and evacuation guidance
+-  **Cyclone** - Cyclone tracking and safety protocols
+-  **Heatwaves** - Heat advisory and safety measures
+-  **Chemical Hazards** - Chemical spill response and containment
+-  **Nuclear Emergencies** - Radiation safety and evacuation
+-  **Landslides** - Landslide warnings and prevention
+-  **Urban Floods** - Flood monitoring and response
+-  **Earthquakes** - Seismic activity tracking and safety
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 ### Backend
 - **Runtime**: Node.js (v18+)
@@ -66,7 +66,7 @@ A comprehensive emergency response and disaster management system that enables r
 - **Charts**: Recharts
 - **HTTP Client**: Fetch API
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 Aegis/
@@ -109,7 +109,7 @@ Aegis/
 └── docs/                       # Documentation files
 ```
 
-## 📦 Prerequisites
+##  Prerequisites
 
 Before you begin, ensure you have the following installed:
 
@@ -123,7 +123,7 @@ Before you begin, ensure you have the following installed:
 - **Twilio Account** - For SMS notifications ([Sign up](https://www.twilio.com/))
 - **MongoDB Atlas** (Optional) - For cloud database ([Sign up](https://www.mongodb.com/cloud/atlas))
 
-## 🚀 Installation
+##  Installation
 
 ### 1. Clone the Repository
 
@@ -220,7 +220,7 @@ npm install
 # Continue for other disaster cards...
 ```
 
-## ⚙️ Configuration
+##  Configuration
 
 ### Backend Configuration
 
@@ -249,7 +249,7 @@ VITE_API_URL=http://localhost:5000
 VITE_SOCKET_URL=http://localhost:5000
 ```
 
-## 🏃 Running the Application
+##  Running the Application
 
 ### Development Mode
 
@@ -302,41 +302,41 @@ cd ../../backend
 npm start
 ```
 
-## 📱 Modules
+##  Modules
 
-### 🔐 Authentication (`/api/auth`)
+###  Authentication (`/api/auth`)
 - User registration and login
 - JWT-based authentication
 - Role-based access control (Admin, User)
 
-### 🚨 Incidents (`/api/incidents`)
+###  Incidents (`/api/incidents`)
 - Report new incidents with photos and location
 - View all incidents
 - Update incident status
 - Filter by disaster type and severity
 
-### 📢 Alerts (`/api/alerts`)
+###  Alerts (`/api/alerts`)
 - Create and broadcast emergency alerts
 - Target specific regions or disaster types
 - SMS notifications to subscribers
 - Real-time web notifications via Socket.io
 
-### ✅ Check-ins (`/api/check-ins`)
+###  Check-ins (`/api/check-ins`)
 - Safety check-in for citizens
 - Location-based check-ins
 - Status tracking (Safe, Need Help, Emergency)
 
-### 📞 Subscribers (`/api/subscribers`)
+###  Subscribers (`/api/subscribers`)
 - Subscribe to emergency alerts
 - Manage notification preferences
 - Phone number verification
 
-### 💬 SMS (`/api/sms`)
+###  SMS (`/api/sms`)
 - Send SMS notifications
 - Bulk SMS to subscribers
 - Delivery status tracking
 
-## 📡 API Documentation
+##  API Documentation
 
 ### Base URL
 ```
@@ -474,7 +474,7 @@ Content-Type: application/json
 - `alert:new` - New emergency alert
 - `location:update` - Live location update from field agent
 
-## 🧪 Testing
+##  Testing
 
 ### Database Verification
 
@@ -511,7 +511,7 @@ curl http://localhost:5000/api/incidents
 curl http://localhost:5000/api/alerts
 ```
 
-## 📚 Documentation Files
+##  Documentation Files
 
 - `QUICK_START.md` - Quick start guide
 - `SETUP_GUIDE.md` - Detailed setup instructions
@@ -522,7 +522,7 @@ curl http://localhost:5000/api/alerts
 - `IMPLEMENTATION_SUMMARY.md` - Implementation details
 - `FIXES_APPLIED_SUMMARY.md` - Bug fixes and updates
 
-## 🤝 Contributing
+##  Contributing
 
 Contributions are welcome! Please follow these steps:
 
@@ -540,7 +540,7 @@ Contributions are welcome! Please follow these steps:
 - Update documentation for new features
 - Test thoroughly before submitting PR
 
-## 🐛 Troubleshooting
+##  Troubleshooting
 
 ### Common Issues
 
@@ -575,15 +575,15 @@ npm install
 - Check phone number format (+CountryCode)
 - Ensure sufficient Twilio credits
 
-## 📄 License
+##  License
 
 This project is licensed under the ISC License. See the [LICENSE](LICENSE) file for details.
 
-## 👥 Team
+##  Team
 
 **AEGIS Team** - [RJScripts-24](https://github.com/RJScripts-24)
 
-## 🙏 Acknowledgments
+##  Acknowledgments
 
 - [Express.js](https://expressjs.com/) - Backend framework
 - [React](https://reactjs.org/) - Frontend library
@@ -594,9 +594,7 @@ This project is licensed under the ISC License. See the [LICENSE](LICENSE) file 
 - [Leaflet](https://leafletjs.com/) - Map visualization
 - [Radix UI](https://www.radix-ui.com/) - UI components
 
-## 📞 Support
 
-For support, email support@aegis-emergency.com or open an issue in the repository.
 
 ## 🔗 Links
 
@@ -606,8 +604,4 @@ For support, email support@aegis-emergency.com or open an issue in the repositor
 
 ---
 
-<div align="center">
-  <strong>Built with ❤️ by the AEGIS Team</strong>
-  <br>
-  <em>Empowering communities through technology in times of crisis</em>
-</div>
+
