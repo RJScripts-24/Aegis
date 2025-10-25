@@ -1,8 +1,7 @@
 const Incident = require('./incident.model');
-const { uploadImage } = require('../../services/cloudinary'); // Assumes cloudinary.js exports 'uploadImage'
 const { getSocket } = require('../../services/socket');
-const { asyncHandler, ApiResponse, ApiError } = require('../../utils/helpers');
-const fs = require('fs'); // To unlink temporary files
+const { asyncHandler, ApiResponse, ApiError } = require('../../utils/helper');
+const fs = require('fs'); // To read and unlink temporary files
 
 /**
  * @desc    Submit a new incident report (with optional photo)
@@ -10,7 +9,13 @@ const fs = require('fs'); // To unlink temporary files
  * @access  Public
  */
 const createIncident = asyncHandler(async (req, res) => {
-  const { type, location } = req.body;
+  console.log('\n=== CREATE INCIDENT REQUEST ===');
+  console.log('Body:', req.body);
+  console.log('File:', req.file);
+  console.log('Headers:', req.headers);
+  console.log('================================\n');
+  
+  const { type, location, additionalNotes } = req.body;
 
   // --- 1. Validation ---
   if (!type || !location) {
@@ -31,22 +36,28 @@ const createIncident = asyncHandler(async (req, res) => {
   }
 
   // --- 3. Handle File Upload ---
-  let photoURL = null;
+  let photoData = null;
   if (req.file) {
     try {
-      // 'req.file.path' is the temporary path from multer
-      const uploadResult = await uploadImage(req.file.path);
-      photoURL = uploadResult.secure_url;
+      // Read the file and convert to Base64
+      const fileBuffer = fs.readFileSync(req.file.path);
+      const base64Image = fileBuffer.toString('base64');
+      
+      photoData = {
+        data: base64Image,
+        contentType: req.file.mimetype,
+        filename: req.file.originalname,
+      };
       
       // Clean up the temporarily stored file
       fs.unlinkSync(req.file.path);
     } catch (uploadError) {
       // Clean up the file even if upload fails
-      if (req.file.path) {
+      if (req.file.path && fs.existsSync(req.file.path)) {
         fs.unlinkSync(req.file.path);
       }
-      console.error('Cloudinary upload error:', uploadError);
-      throw new ApiError(500, 'Error uploading image. Please try again.');
+      console.error('File processing error:', uploadError);
+      throw new ApiError(500, 'Error processing image. Please try again.');
     }
   }
 
@@ -54,7 +65,8 @@ const createIncident = asyncHandler(async (req, res) => {
   const newIncident = await Incident.create({
     type,
     location: parsedLocation,
-    photoURL,
+    photo: photoData,
+    additionalNotes: additionalNotes || '', // Add additional notes
     status: 'Pending', // Default status as per spec
   });
 

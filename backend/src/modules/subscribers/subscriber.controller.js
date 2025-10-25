@@ -1,6 +1,6 @@
 const Subscriber = require('./subscriber.model');
 // Assuming you have utility handlers in this location
-const { asyncHandler, ApiResponse, ApiError } = require('../../utils/helpers');
+const { asyncHandler, ApiResponse, ApiError } = require('../../utils/helper');
 
 /**
  * @desc    Opt-in a user for SMS alerts

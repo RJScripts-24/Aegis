@@ -47,7 +47,7 @@ class ApiResponse {
  * @param   {Function} requestHandler - The async controller function
  * @returns {Function} - A new function that handles the request
  */
-const asyncHandler = (requestHandler)D => {
+const asyncHandler = (requestHandler) => {
   return (req, res, next) => {
     Promise.resolve(requestHandler(req, res, next)).catch((err) => next(err));
   };

@@ -1,5 +1,5 @@
 const smsService = require('./sms.service');
-const { asyncHandler } = require('../../utils/helpers');
+const { asyncHandler } = require('../../utils/helper');
 const twilio = require('twilio');
 
 /**

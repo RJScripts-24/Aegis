@@ -1,7 +1,7 @@
 const Admin = require('../admin/admin.model');
 const jwt = require('jsonwebtoken');
 const config = require('../../config'); // Loads and exports .env variables
-const { ApiError } = require('../../utils/helpers'); // Assuming ApiError is in this path
+const { ApiError } = require('../../utils/helper'); // Assuming ApiError is in this path
 
 /**
  * Generates a JSON Web Token (JWT) for an admin.

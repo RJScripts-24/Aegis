@@ -1,6 +1,6 @@
 const alertService = require('./alert.service');
 // Assuming you have utility handlers in this location
-const { asyncHandler, ApiResponse, ApiError } = require('../../utils/helpers'); 
+const { asyncHandler, ApiResponse, ApiError } = require('../../utils/helper'); 
 
 /**
  * @desc    Get all active alerts for the public map
@@ -45,7 +45,48 @@ const createAlert = asyncHandler(async (req, res) => {
   );
 });
 
+/**
+ * @desc    Create a broadcast alert (sent to everyone)
+ * @route   POST /api/alerts/broadcast
+ * @access  Admin (JWT Protected)
+ */
+const createBroadcastAlert = asyncHandler(async (req, res) => {
+  const { message, type } = req.body;
+
+  // --- Basic Validation ---
+  if (!message) {
+    throw new ApiError(400, 'Message is required.');
+  }
+
+  if (!type || !['emergency', 'warning', 'info', 'advisory'].includes(type)) {
+    throw new ApiError(400, 'Invalid alert type. Must be: emergency, warning, info, or advisory');
+  }
+  // --- End Validation ---
+
+  // Create broadcast alert
+  const newAlert = await alertService.createBroadcastAlert({ message, type });
+
+  return res.status(201).json(
+    new ApiResponse(201, newAlert, 'Broadcast alert created successfully')
+  );
+});
+
+/**
+ * @desc    Get latest active broadcast alerts
+ * @route   GET /api/alerts/broadcast
+ * @access  Public
+ */
+const getBroadcastAlerts = asyncHandler(async (req, res) => {
+  const alerts = await alertService.getActiveBroadcastAlerts();
+  
+  return res.status(200).json(
+    new ApiResponse(200, alerts, 'Broadcast alerts retrieved successfully')
+  );
+});
+
 module.exports = {
   getAlerts,
   createAlert,
+  createBroadcastAlert,
+  getBroadcastAlerts,
 };

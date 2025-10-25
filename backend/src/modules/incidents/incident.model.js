@@ -20,7 +20,7 @@ const incidentSchema = new mongoose.Schema({
   type: {
     type: String,
     enum: {
-      values: ['Flood', 'Fire', 'Traffic', 'Medical', 'Other'], // Added a few more common types
+      values: ['cyclone', 'flood', 'heatwave', 'landslide', 'earthquake', 'tsunami', 'other'], // Match frontend disaster types
       message: '{VALUE} is not a supported incident type.',
     },
     required: [true, 'Incident type is required.'],
@@ -35,10 +35,24 @@ const incidentSchema = new mongoose.Schema({
     enum: ['Pending', 'Acknowledged', 'Resolved'],
     default: 'Pending',
   },
-  photoURL: {
-    type: String, // URL from Cloudinary or Twilio
+  photo: {
+    data: {
+      type: String, // Base64 encoded image data
+      default: null,
+    },
+    contentType: {
+      type: String, // e.g., 'image/jpeg', 'image/png'
+      default: null,
+    },
+    filename: {
+      type: String,
+      default: null,
+    },
+  },
+  additionalNotes: {
+    type: String,
     trim: true,
-    default: null,
+    default: '',
   },
 }, {
   // Automatically add 'createdAt' and 'updatedAt' fields

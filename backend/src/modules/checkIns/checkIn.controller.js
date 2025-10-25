@@ -1,6 +1,6 @@
 const CheckIn = require('./checkIn.model');
 // Assuming you have utility handlers in this location
-const { asyncHandler, ApiResponse, ApiError } = require('../../utils/helpers');
+const { asyncHandler, ApiResponse, ApiError } = require('../../utils/helper');
 
 /**
  * @desc    Logs an "I Am Safe" check-in

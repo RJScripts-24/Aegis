@@ -1,7 +1,7 @@
 
 const authService = require('./auth.service');
 // Assuming you have utility handlers in this location
-const { asyncHandler, ApiResponse, ApiError } = require('../../utils/helpers');
+const { asyncHandler, ApiResponse, ApiError } = require('../../utils/helper');
 
 /**
  * @desc    Logs in an admin

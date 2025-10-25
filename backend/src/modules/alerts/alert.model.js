@@ -1,4 +1,4 @@
-const mongoose = 'mongoose';
+const mongoose = require('mongoose');
 
 /**
  * GeoJSON Schema for the 'area' field.
@@ -28,9 +28,22 @@ const alertSchema = new mongoose.Schema({
     required: [true, 'Alert message is required'],
     trim: true,
   },
+  type: {
+    type: String,
+    enum: ['emergency', 'warning', 'info', 'advisory'],
+    default: 'info',
+  },
   area: {
     type: geoJsonPolygonSchema,
-    required: true,
+    required: false, // Made optional for broadcast alerts
+  },
+  isBroadcast: {
+    type: Boolean,
+    default: false, // True for broadcast alerts (sent to everyone)
+  },
+  isActive: {
+    type: Boolean,
+    default: true, // Can be set to false to deactivate old alerts
   },
 }, {
   // Automatically add 'createdAt' and 'updatedAt' fields

@@ -55,7 +55,68 @@ const createAndBroadcastAlert = async (alertData) => {
   }
 };
 
+/**
+ * @desc    Creates a broadcast alert (sent to everyone, no specific area)
+ * @param {object} alertData - The alert data ({ message, type }).
+ * @returns {Promise<object>} A promise that resolves to the newly created alert document.
+ */
+const createBroadcastAlert = async (alertData) => {
+  try {
+    const { message, type } = alertData;
+
+    // 1. Save the broadcast alert to the database
+    const newAlert = await Alert.create({
+      title: type.charAt(0).toUpperCase() + type.slice(1), // "Emergency", "Warning", etc.
+      message,
+      type,
+      isBroadcast: true,
+      isActive: true,
+    });
+
+    // 2. Emit a 'new-broadcast-alert' event via Socket.io to the 'Public' room
+    const io = getSocket();
+    if (io) {
+      io.to('Public').emit('new-broadcast-alert', newAlert);
+      console.log('✅ Broadcast alert emitted via Socket.io:', newAlert._id);
+    } else {
+      console.warn('⚠️  Socket.io instance not available.');
+    }
+
+    return newAlert;
+
+  } catch (error) {
+    console.error('Error creating broadcast alert:', error);
+    if (error.name === 'ValidationError') {
+      throw new Error(error.message);
+    }
+    throw new Error('Could not create broadcast alert.');
+  }
+};
+
+/**
+ * @desc    Get all active broadcast alerts (created in last 24 hours)
+ * @returns {Promise<Array>} A promise that resolves to an array of broadcast alerts.
+ */
+const getActiveBroadcastAlerts = async () => {
+  try {
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    
+    const alerts = await Alert.find({
+      isBroadcast: true,
+      isActive: true,
+      createdAt: { $gte: oneDayAgo }
+    }).sort({ createdAt: -1 });
+    
+    return alerts;
+  } catch (error) {
+    console.error('Error fetching broadcast alerts:', error);
+    throw new Error('Could not retrieve broadcast alerts.');
+  }
+};
+
 module.exports = {
   getAllPublicAlerts,
   createAndBroadcastAlert,
+  createBroadcastAlert,
+  getActiveBroadcastAlerts,
 };
