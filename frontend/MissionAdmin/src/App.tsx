@@ -60,10 +60,10 @@ function Navigation({ onPrioritizeClick, onBroadcastClick }: { onPrioritizeClick
     } else if (itemId === 'broadcast') {
       onBroadcastClick();
     } else if (itemId === 'incidents') {
-      window.location.href = 'http://localhost:3004';
+      window.location.href = import.meta.env.VITE_INCIDENT_ADMIN_URL || 'http://localhost:3004';
     } else if (itemId === 'logout') {
       // Redirect to Landing Page
-      window.location.href = 'http://localhost:5173';
+      window.location.href = import.meta.env.VITE_LANDING_PAGE_URL || 'http://localhost:5173';
     }
   };
 

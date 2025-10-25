@@ -251,7 +251,7 @@ export default function App() {
   };
 
   const handleReportIncident = () => {
-    window.location.href = 'http://localhost:3002';
+    window.location.href = import.meta.env.VITE_REPORT_INCIDENTS_URL || 'http://localhost:3002';
   };
 
   const handleEmergencyContacts = () => {

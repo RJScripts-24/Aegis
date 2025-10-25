@@ -44,7 +44,7 @@ You need to deploy **5 separate sites** on Netlify:
 - **Publish directory**: `dist`
 - **Suggested site name**: `aegis-report-incidents`
 
-### 2. Configure Environment Variables for Landing Page
+### 2. Configure Environment Variables
 
 After deploying all 5 sites, you'll have URLs like:
 - `https://aegis-landing-page.netlify.app`
@@ -53,7 +53,7 @@ After deploying all 5 sites, you'll have URLs like:
 - `https://aegis-mission-admin.netlify.app`
 - `https://aegis-report-incidents.netlify.app`
 
-Now configure the Landing Page environment variables:
+#### For Landing Page:
 
 1. Go to your Landing Page site on Netlify
 2. Navigate to: **Site settings** → **Environment variables** → **Add a variable**
@@ -66,7 +66,38 @@ VITE_MISSION_ADMIN_URL = https://aegis-mission-admin.netlify.app
 VITE_REPORT_INCIDENTS_URL = https://aegis-report-incidents.netlify.app
 ```
 
-4. **Important**: After adding environment variables, trigger a new deploy:
+#### For MissionAdmin:
+
+1. Go to your MissionAdmin site on Netlify
+2. Navigate to: **Site settings** → **Environment variables** → **Add a variable**
+3. Add these variables:
+
+```
+VITE_INCIDENT_ADMIN_URL = https://aegis-incident-admin.netlify.app
+VITE_LANDING_PAGE_URL = https://aegis-landing-page.netlify.app
+```
+
+#### For MapPublic:
+
+1. Go to your MapPublic site on Netlify
+2. Navigate to: **Site settings** → **Environment variables** → **Add a variable**
+3. Add this variable:
+
+```
+VITE_REPORT_INCIDENTS_URL = https://aegis-report-incidents.netlify.app
+```
+
+#### For LocationPopup:
+
+1. Go to your LocationPopup site on Netlify
+2. Navigate to: **Site settings** → **Environment variables** → **Add a variable**
+3. Add this variable:
+
+```
+VITE_MAP_PUBLIC_URL = https://aegis-map-public.netlify.app
+```
+
+4. **Important**: After adding environment variables to each site, trigger a new deploy:
    - Go to **Deploys** tab
    - Click **Trigger deploy** → **Deploy site**
 
@@ -76,12 +107,27 @@ All apps are configured to use Node 18 in their `netlify.toml` files. If you enc
 
 ## ✅ Verification
 
-After deployment:
+After deployment and configuring environment variables:
 
-1. Visit your Landing Page URL
-2. Click the "Get Alerts" button → should open the Map Public app
-3. Click the "Admin Login" button → should open the Incident Admin app
-4. All links should now work in production! 🎉
+1. **Landing Page**:
+   - Visit your Landing Page URL
+   - Click "Get Alerts" → should open MapPublic
+   - Click "Admin Login" → should open IncidentAdmin
+
+2. **MissionAdmin**:
+   - Visit your MissionAdmin URL
+   - Click "Incidents" button → should open IncidentAdmin
+   - Click "Log Out" → should return to Landing Page
+
+3. **MapPublic**:
+   - Visit your MapPublic URL
+   - Click "Report Incident" button → should open ReportIncidents
+
+4. **LocationPopup**:
+   - Visit your LocationPopup URL
+   - After allowing location → should redirect to MapPublic
+
+All navigation links should now work across deployed apps! 🎉
 
 ## 🔧 Troubleshooting
 
