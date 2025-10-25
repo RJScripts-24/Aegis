@@ -10,3 +10,7 @@
 
 [build.environment]
   NODE_VERSION = "18"
+  # Set these in Netlify UI: Site settings > Environment variables
+  # VITE_API_URL = "https://your-backend-url.com/api"
+  # VITE_INCIDENT_ADMIN_URL = "https://aegis-incident-admin.netlify.app"
+  # VITE_LANDING_PAGE_URL = "https://aegis-landing.netlify.app"

@@ -10,3 +10,5 @@
 
 [build.environment]
   NODE_VERSION = "18"
+  # Set these in Netlify UI: Site settings > Environment variables
+  # VITE_API_URL = "https://your-backend-url.com/api"
